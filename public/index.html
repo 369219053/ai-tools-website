@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI工具箱 - 智能工具集合平台</title>
+    <meta name="description" content="专业的AI工具集合平台，提供文本生成、图像创作、代码助手等多种智能工具">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#8B5CF6',
+                        accent: '#06B6D4'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .typing-animation {
+            border-right: 2px solid #3B82F6;
+            animation: typing 3s steps(30) infinite;
+        }
+        @keyframes typing {
+            0%, 50% { border-color: transparent; }
+            51%, 100% { border-color: #3B82F6; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <span class="text-2xl">🤖</span>
+                        <span class="ml-2 text-xl font-bold text-gray-900">AI工具箱</span>
+                    </div>
+                    <div class="hidden md:ml-6 md:flex md:space-x-8">
+                        <a href="#tools" class="text-gray-900 hover:text-primary px-3 py-2 text-sm font-medium">工具</a>
+                        <a href="#features" class="text-gray-500 hover:text-primary px-3 py-2 text-sm font-medium">特色</a>
+                        <a href="#pricing" class="text-gray-500 hover:text-primary px-3 py-2 text-sm font-medium">价格</a>
+                        <a href="#about" class="text-gray-500 hover:text-primary px-3 py-2 text-sm font-medium">关于</a>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div id="user-menu" class="hidden">
+                        <div class="flex items-center space-x-4">
+                            <span id="username" class="text-gray-700"></span>
+                            <button id="profile-btn" class="text-gray-500 hover:text-primary">个人中心</button>
+                            <button id="logout-btn" class="text-gray-500 hover:text-red-500">退出</button>
+                        </div>
+                    </div>
+                    <div id="auth-buttons" class="flex items-center space-x-4">
+                        <button id="login-btn" class="text-gray-500 hover:text-primary px-3 py-2 text-sm font-medium">登录</button>
+                        <button id="register-btn" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors">注册</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section class="gradient-bg text-white py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">
+                智能工具，
+                <span class="typing-animation">无限可能</span>
+            </h1>
+            <p class="text-xl md:text-2xl mb-8 text-blue-100">
+                集成最先进的AI技术，为您提供专业的智能工具服务
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button id="start-btn" class="bg-white text-primary px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                    立即开始
+                </button>
+                <button class="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-primary transition-colors">
+                    了解更多
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 工具展示区域 -->
+    <section id="tools" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">强大的AI工具集合</h2>
+                <p class="text-xl text-gray-600">一站式解决您的创作和工作需求</p>
+            </div>
+            
+            <div id="tools-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 工具卡片将通过JavaScript动态加载 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 特色功能 -->
+    <section id="features" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">为什么选择我们</h2>
+                <p class="text-xl text-gray-600">专业、高效、易用的AI工具平台</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="text-center">
+                    <div class="bg-primary text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                        ⚡
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">极速响应</h3>
+                    <p class="text-gray-600">先进的AI算法，毫秒级响应速度</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-secondary text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                        🎯
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">精准智能</h3>
+                    <p class="text-gray-600">深度学习模型，理解您的真实需求</p>
+                </div>
+                <div class="text-center">
+                    <div class="bg-accent text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                        🔒
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">安全可靠</h3>
+                    <p class="text-gray-600">企业级安全保障，保护您的隐私</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 登录/注册模态框 -->
+    <div id="auth-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg max-w-md w-full p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="modal-title" class="text-lg font-semibold">登录</h3>
+                    <button id="close-modal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <form id="auth-form">
+                    <div id="username-field" class="mb-4 hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">用户名</label>
+                        <input type="text" id="username" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">邮箱</label>
+                        <input type="email" id="email" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">密码</label>
+                        <input type="password" id="password" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" required>
+                    </div>
+                    <button type="submit" class="w-full bg-primary text-white py-2 rounded-lg font-medium hover:bg-blue-600 transition-colors">
+                        <span id="submit-text">登录</span>
+                    </button>
+                </form>
+                
+                <div class="mt-4 text-center">
+                    <button id="switch-mode" class="text-primary hover:underline">
+                        <span id="switch-text">没有账号？立即注册</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <span class="text-2xl">🤖</span>
+                        <span class="ml-2 text-xl font-bold">AI工具箱</span>
+                    </div>
+                    <p class="text-gray-400">专业的AI工具集合平台，让智能技术为您服务</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">产品</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">文本生成</a></li>
+                        <li><a href="#" class="hover:text-white">图像创作</a></li>
+                        <li><a href="#" class="hover:text-white">代码助手</a></li>
+                        <li><a href="#" class="hover:text-white">智能翻译</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">支持</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white">帮助中心</a></li>
+                        <li><a href="#" class="hover:text-white">API文档</a></li>
+                        <li><a href="#" class="hover:text-white">联系我们</a></li>
+                        <li><a href="#" class="hover:text-white">反馈建议</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">关注我们</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white">微信</a>
+                        <a href="#" class="text-gray-400 hover:text-white">微博</a>
+                        <a href="#" class="text-gray-400 hover:text-white">QQ群</a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 AI工具箱. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
+</html> 

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI工具 - AI工具箱</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#8B5CF6',
+                        accent: '#06B6D4'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3B82F6;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .result-fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="/" class="flex items-center">
+                        <span class="text-2xl">🤖</span>
+                        <span class="ml-2 text-xl font-bold text-gray-900">AI工具箱</span>
+                    </a>
+                    <div class="ml-6 flex items-center">
+                        <span class="text-gray-500">/</span>
+                        <span id="tool-name" class="ml-2 text-gray-700">工具</span>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div id="user-menu" class="hidden">
+                        <div class="flex items-center space-x-4">
+                            <span id="username" class="text-gray-700"></span>
+                            <button id="profile-btn" class="text-gray-500 hover:text-primary">个人中心</button>
+                            <button id="logout-btn" class="text-gray-500 hover:text-red-500">退出</button>
+                        </div>
+                    </div>
+                    <div id="auth-buttons" class="flex items-center space-x-4">
+                        <button id="login-btn" class="text-gray-500 hover:text-primary px-3 py-2 text-sm font-medium">登录</button>
+                        <button id="register-btn" class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-600 transition-colors">注册</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要内容 -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- 工具信息侧边栏 -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-lg p-6 sticky top-24">
+                    <div id="tool-info" class="text-center">
+                        <div class="text-6xl mb-4">🔧</div>
+                        <h1 class="text-2xl font-bold mb-2">加载中...</h1>
+                        <p class="text-gray-600 mb-4">正在加载工具信息</p>
+                    </div>
+                    
+                    <div id="tool-features" class="hidden">
+                        <h3 class="font-semibold mb-3">功能特色</h3>
+                        <ul id="features-list" class="space-y-2 text-sm text-gray-600">
+                        </ul>
+                    </div>
+
+                    <div class="mt-6 pt-6 border-t">
+                        <button id="favorite-btn" class="w-full bg-gray-100 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center">
+                            <span id="favorite-icon">⭐</span>
+                            <span id="favorite-text" class="ml-2">收藏工具</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 工具使用区域 -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <!-- 文本生成工具 -->
+                    <div id="text-generator-tool" class="tool-interface hidden">
+                        <h2 class="text-xl font-bold mb-6">智能文本生成</h2>
+                        <form id="text-form">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">生成提示</label>
+                                <textarea id="text-prompt" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="请输入您想要生成的内容描述..."></textarea>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">内容类型</label>
+                                    <select id="text-type" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <option value="article">文章</option>
+                                        <option value="title">标题</option>
+                                        <option value="summary">摘要</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">长度</label>
+                                    <select id="text-length" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <option value="short">短</option>
+                                        <option value="medium">中</option>
+                                        <option value="long">长</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors flex items-center justify-center">
+                                <span id="text-loading" class="loading-spinner hidden mr-2"></span>
+                                <span id="text-submit-text">生成文本</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- 图像生成工具 -->
+                    <div id="image-generator-tool" class="tool-interface hidden">
+                        <h2 class="text-xl font-bold mb-6">AI图像生成</h2>
+                        <form id="image-form">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">图像描述</label>
+                                <textarea id="image-prompt" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="请描述您想要生成的图像..."></textarea>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">风格</label>
+                                    <select id="image-style" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <option value="realistic">写实</option>
+                                        <option value="cartoon">卡通</option>
+                                        <option value="artistic">艺术</option>
+                                        <option value="abstract">抽象</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">尺寸</label>
+                                    <select id="image-size" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <option value="512x512">正方形 (512x512)</option>
+                                        <option value="768x512">横向 (768x512)</option>
+                                        <option value="512x768">纵向 (512x768)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors flex items-center justify-center">
+                                <span id="image-loading" class="loading-spinner hidden mr-2"></span>
+                                <span id="image-submit-text">生成图像</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- 代码助手工具 -->
+                    <div id="code-assistant-tool" class="tool-interface hidden">
+                        <h2 class="text-xl font-bold mb-6">代码助手</h2>
+                        <form id="code-form">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">功能描述</label>
+                                <textarea id="code-description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="请描述您需要的代码功能..."></textarea>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">编程语言</label>
+                                    <select id="code-language" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <option value="javascript">JavaScript</option>
+                                        <option value="python">Python</option>
+                                        <option value="java">Java</option>
+                                        <option value="cpp">C++</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">代码类型</label>
+                                    <select id="code-type" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <option value="function">函数</option>
+                                        <option value="class">类</option>
+                                        <option value="script">脚本</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors flex items-center justify-center">
+                                <span id="code-loading" class="loading-spinner hidden mr-2"></span>
+                                <span id="code-submit-text">生成代码</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- 翻译工具 -->
+                    <div id="translation-tool" class="tool-interface hidden">
+                        <h2 class="text-xl font-bold mb-6">智能翻译</h2>
+                        <form id="translation-form">
+                            <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">原文</label>
+                                <textarea id="translation-text" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary" placeholder="请输入要翻译的文本..."></textarea>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">源语言</label>
+                                    <select id="from-lang" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <option value="auto">自动检测</option>
+                                        <option value="en">英语</option>
+                                        <option value="zh">中文</option>
+                                        <option value="ja">日语</option>
+                                        <option value="ko">韩语</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">目标语言</label>
+                                    <select id="to-lang" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary">
+                                        <option value="zh">中文</option>
+                                        <option value="en">英语</option>
+                                        <option value="ja">日语</option>
+                                        <option value="ko">韩语</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-primary text-white py-3 rounded-lg font-medium hover:bg-blue-600 transition-colors flex items-center justify-center">
+                                <span id="translation-loading" class="loading-spinner hidden mr-2"></span>
+                                <span id="translation-submit-text">翻译</span>
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- 通用工具界面 -->
+                    <div id="generic-tool" class="tool-interface hidden">
+                        <h2 class="text-xl font-bold mb-6">AI工具</h2>
+                        <div class="text-center py-12">
+                            <div class="text-6xl mb-4">🚧</div>
+                            <h3 class="text-xl font-semibold mb-2">功能开发中</h3>
+                            <p class="text-gray-600">该工具正在开发中，敬请期待！</p>
+                        </div>
+                    </div>
+
+                    <!-- 结果显示区域 -->
+                    <div id="result-section" class="hidden mt-8 pt-8 border-t">
+                        <h3 class="text-lg font-semibold mb-4">生成结果</h3>
+                        <div id="result-content" class="bg-gray-50 rounded-lg p-4">
+                            <!-- 结果内容将在这里显示 -->
+                        </div>
+                        <div class="mt-4 flex space-x-2">
+                            <button id="copy-result" class="bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200 transition-colors">
+                                复制结果
+                            </button>
+                            <button id="download-result" class="bg-gray-100 text-gray-700 px-4 py-2 rounded hover:bg-gray-200 transition-colors">
+                                下载结果
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/tool.js"></script>
+</body>
+</html> 
