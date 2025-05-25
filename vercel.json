@@ -4,6 +4,10 @@
     {
       "src": "server.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "public/**/*",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -12,23 +16,17 @@
       "dest": "/server.js"
     },
     {
-      "src": "/tools/(.*)",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/profile",
-      "dest": "/server.js"
-    },
-    {
-      "src": "/health",
-      "dest": "/server.js"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/server.js"
+      "dest": "/public/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/public/index.html"
     }
   ],
-  "env": {
-    "NODE_ENV": "production"
+  "functions": {
+    "server.js": {
+      "maxDuration": 30
+    }
   }
-} 
+}
